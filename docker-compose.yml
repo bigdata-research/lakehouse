@@ -1,0 +1,158 @@
+services:
+  minio:
+    container_name: minio
+    image: minio/minio
+    networks:
+      - my_network
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    volumes:
+      - ./mount/minio/data:/data
+      - ./mount/minio-config:/root/.minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+    command: server /data --console-address ":9090"
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.2-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: hive
+      POSTGRES_PASSWORD: hive123
+      POSTGRES_DB: metastore_db
+    depends_on: 
+      - minio
+    networks:
+      - my_network
+    # volumes:
+    #   - ./mount/postgres/data:/var/lib/postgresql/data
+
+
+  hive-metastore:
+    container_name: hive-metastore
+    build: ./images/hive-metastore
+    image: kevinity310/lasagna-hive-metastore:latest
+    ports:
+      - 9083:9083
+    depends_on:
+      - postgres
+    networks:
+      - my_network
+    # healthcheck:
+    #     test:  ["CMD-SHELL", "nc -z localhost 9083 || exit 1"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 3
+    # restart: always
+
+#+---------------------------------------------+
+#| Spark cluster |
+#+---------------------------------------------+
+  spark-master:
+    container_name: spark-master
+    build: ./images/spark
+    image: kevinity310/lasagna-spark:latest
+    ports:
+      - "5050:5050"
+      - "7077:7077"
+    depends_on:
+      - postgres
+    networks:
+      - my_network
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - SPARK_LOCAL_IP=spark-master
+    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.master.Master --ip spark-master --port 7077 --webui-port 5050
+
+
+  spark-worker-a:
+    container_name: spark-worker-a
+    build: ./images/spark
+    image: kevinity310/lasagna-spark:latest
+    depends_on:
+      - spark-master
+    networks:
+      - my_network
+    ports:
+      - "5051:5051"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: '6G'
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - SPARK_LOCAL_IP=spark-worker-a
+    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5051 spark://spark-master:7077
+
+    
+  spark-worker-b:
+    container_name: spark-worker-b
+    build: ./images/spark
+    image: kevinity310/lasagna-spark:latest
+    depends_on:
+      - spark-master
+    networks:
+      - my_network
+    ports:
+      - "5052:5052"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: '6G'
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - SPARK_LOCAL_IP=spark-worker-b
+    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5052 spark://spark-master:7077
+
+
+#+------------------------------------+
+#| Jupyter notebook for Working space |
+#+------------------------------------+
+  workspace:
+    container_name: workspace
+    build: ./images/workspace
+    image: kevinity310/lasagna-workspace:latest
+    depends_on:
+      - spark-master
+    networks:
+      - my_network
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - ./work:/usr/local/spark_dev/work
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+    command: jupyter lab --port 8888
+
+# docker logs workspace 2>&1 | grep http://127.0.0.1
+
+
+  trino:
+    container_name: trino
+    build: ./images/trino
+    image: kevinity310/lasagna-trino:latest
+    depends_on:
+      - hive-metastore
+    networks:
+      - my_network
+    ports:
+      - "8080:8080"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      
+networks:
+  my_network:
+    driver: bridge
+    name: my_network

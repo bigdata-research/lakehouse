@@ -1,0 +1,50 @@
+{
+    "language_servers": {
+        "sql-language-server": {
+            "priority": 50,
+            "serverSettings": {
+                "personalConfig.connections": [
+                    {
+                        "name": "default sqlite3 connection",
+                        "adapter": "json",
+                        "filename": ":memory:",
+                        "projectPaths": [
+                            "."
+                        ],
+                        "ssh": null
+                    }
+                ]
+            }
+        },
+        "sparksql-language-server": {
+            "priority": 50,
+            "serverSettings": {
+                "sqlLanguageServer.connections": [
+                    {
+                        "name": "pyspark-conf",
+                        "adapter": "json",
+                        "filename": "/tmp/sparkdb.schema.json",
+                        "jupyterLabMode": true
+                    }
+                ]
+            }
+        },
+        "trino-language-server": {
+            "priority": 50,
+            "serverSettings": {
+                "connections": [
+                    {
+                        "name": "trino-conf",
+                        "adapter": "json",
+                        "filename": "/tmp/trinodb.schema.json",
+                        "jupyterLabMode": true
+                    }
+                ]
+            }
+        }
+    },
+    "loggingConsole": "browser",
+    "loggingLevel": "debug",
+    "logAllCommunication": true,
+    "setTrace": null
+}
