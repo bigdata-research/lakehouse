@@ -26,7 +26,7 @@ RUN pip install jupyterlab
 #| Installing PySpark |
 #+--------------------+
 
-RUN pip install pyspark==3.5.1
+RUN pip install pyspark==3.4.3
 
 ENV SPARK_HOME=/usr/local/lib/python3.10/dist-packages/pyspark
 
@@ -88,6 +88,28 @@ RUN pip install jupyterlab-s3-browser
 ENV JUPYTERLAB_S3_ENDPOINT=http://minio:9000
 ENV JUPYTERLAB_S3_ACCESS_KEY_ID=admin
 ENV JUPYTERLAB_S3_SECRET_ACCESS_KEY=password
+
+#+-------------------------------------+
+#| Installing Apache HUDI dependencies |
+#+-------------------------------------+
+
+RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark3.4-bundle_2.12/0.14.0/hudi-spark3.4-bundle_2.12-0.14.0.jar \
+    --output ${SPARK_HOME}/jars/hudi-spark3.4-bundle_2.12-0.14.0.jar
+
+RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-utilities-bundle_2.12/0.14.1/hudi-utilities-bundle_2.12-0.14.1.jar \
+    --output ${SPARK_HOME}/jars/hudi-utilities-bundle_2.12-0.14.1.jar
+
+RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark-common_2.12/0.14.1/hudi-spark-common_2.12-0.14.1.jar \
+    --output ${SPARK_HOME}/jars/hudi-spark-common_2.12-0.14.1.jar
+
+RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-spark_2.12/0.14.1/hudi-spark_2.12-0.14.1.jar \
+    --output ${SPARK_HOME}/jars/hudi-spark_2.12-0.14.1.jar 
+
+RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-common/0.14.1/hudi-common-0.14.1.jar \
+    --output ${SPARK_HOME}/jars/hudi-common-0.14.1.jar
+
+RUN curl https://repo1.maven.org/maven2/org/apache/hudi/hudi-hive-sync/0.14.1/hudi-hive-sync-0.14.1.jar \
+    --output ${SPARK_HOME}/jars/hudi-hive-sync-0.14.1.jar 
 
 #+----------------+
 #| Installing Git |

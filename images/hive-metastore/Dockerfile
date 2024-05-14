@@ -27,7 +27,7 @@ RUN ln -s /usr/local/apache-hive-metastore-3.0.0-bin /usr/local/hive-metastore
 
 ENV HIVE_HOME=/usr/local/hive-metastore
 
-# Consertar dependência do Guava
+# Remove depedensi in Guava
 
 RUN rm /usr/local/hive-metastore/lib/guava-19.0.jar
 RUN cp ${HADOOP_HOME}/share/hadoop/hdfs/lib/guava-27.0-jre.jar ${HIVE_HOME}/lib/
@@ -38,7 +38,7 @@ RUN curl https://jdbc.postgresql.org/download/postgresql-42.5.0.jar \
     --output /usr/local/postgresql-42.5.0.jar
 RUN ln -s /usr/local/postgresql-42.5.0.jar ${HIVE_HOME}/lib/
 
-# Dependencias MinIO
+# Dependencies MinIO
 
 RUN curl https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar \
     --output ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-aws-3.3.4.jar
@@ -48,7 +48,7 @@ RUN curl https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.2
 
 ENV HADOOP_CLASSPATH=${HADOOP_HOME}/share/hadoop/tools/lib/aws-java-sdk-bundle-1.12.262.jar:${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-aws-3.3.4.jar:${HADOOP_HOME}/share/hadoop/tools/lib/delta-hive-assembly_2.11-0.2.0.jar:
 
-# Dependencias Delta (teste)
+# Dependencies Delta (test)
 
 RUN curl https://github.com/delta-io/connectors/releases/download/v0.2.0/delta-hive-assembly_2.11-0.2.0.jar \
     --output /usr/local/delta-hive-assembly_2.11-0.2.0.jar
