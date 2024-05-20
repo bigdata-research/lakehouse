@@ -18,7 +18,7 @@ ENV HADOOP_HOME=/usr/local/hadoop
 
 # Instalar Hadoop Standalone Metastore https://archive.apache.org/dist/hive/
 
-RUN curl https://archive.apache.org/dist/hive/hive-standalone-metastore-3.0.0/hive-standalone-metastore-3.0.0-bin.tar.gz \
+RUN curl https://dlcdn.apache.org/hive/hive-standalone-metastore-3.0.0/hive-standalone-metastore-3.0.0-bin.tar.gz \
     --output /usr/local/hive-standalone-metastore-3.0.0-bin.tar.gz
 RUN tar xfz /usr/local/hive-standalone-metastore-3.0.0-bin.tar.gz \
     -C /usr/local/
