@@ -69,17 +69,14 @@ services:
       - SPARK_LOCAL_IP=spark-master
     command: usr/local/spark/bin/spark-class org.apache.spark.deploy.master.Master --ip spark-master --port 7077 --webui-port 5050
 
-
-  spark-worker-a:
+  spark-worker:
     container_name: spark-worker-a
     build: ./images/spark
     image: kevinity310/lasagna-spark:latest
     depends_on:
       - spark-master
-    networks:
-      - my_network
     ports:
-      - "5051:5051"
+      - "4040-4042:4040"
     deploy:
       resources:
         limits:
@@ -89,30 +86,9 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - SPARK_LOCAL_IP=spark-worker-a
-    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5051 spark://spark-master:7077
-
-    
-  spark-worker-b:
-    container_name: spark-worker-b
-    build: ./images/spark
-    image: kevinity310/lasagna-spark:latest
-    depends_on:
-      - spark-master
+    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 4040 spark://spark-master:7077
     networks:
       - my_network
-    ports:
-      - "5052:5052"
-    deploy:
-      resources:
-        limits:
-          cpus: '4'
-          memory: '6G'
-    environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=password
-      - SPARK_LOCAL_IP=spark-worker-b
-    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5052 spark://spark-master:7077
-
 
 #+------------------------------------+
 #| Jupyter notebook for Working space |

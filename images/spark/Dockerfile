@@ -1,5 +1,5 @@
 #+-----------------------------------------+
-#|           Imagem Spark 3.5.0            | 
+#|           Image Spark 3.4.3            | 
 #|                                         |
 #| O que decide se é Driver ou Worker      |
 #| é o comando de inicialização no compose |
@@ -12,13 +12,13 @@ SHELL ["/bin/bash", "-c"]
 RUN apt-get update --fix-missing
 
 #+-----------------+
-#| Install cURL |
+#|  Install cURL   |
 #+-----------------+
 
 RUN apt-get install curl -y
 
 #+--------------------+
-#| Install Java 11 |
+#|   Install Java 11  |
 #+--------------------+
 
 RUN apt-get install openjdk-11-jdk -y                                           && \
@@ -29,14 +29,14 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH "${JAVA_HOME}/bin:$PATH"
 
  #+------------------------+
- #| Install Spark 3.5.1 |
+ #| Install Spark 3.4.3 |
  #+------------------------+
 
-RUN curl -O https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz &&\
-    tar zxvf spark-3.5.1-bin-hadoop3.tgz -C /usr/local &&\
-    rm spark-3.5.1-bin-hadoop3.tgz &&\
+RUN curl -O https://dlcdn.apache.org/spark/spark-3.4.3/spark-3.4.3-bin-hadoop3.tgz &&\
+    tar zxvf spark-3.4.3-bin-hadoop3.tgz -C /usr/local &&\
+    rm spark-3.4.3-bin-hadoop3.tgz &&\
     cd /usr/local &&\
-    ln -sT spark-3.5.1-bin-hadoop3 spark
+    ln -sT spark-3.4.3-bin-hadoop3 spark
 
 RUN echo "export SPARK_HOME=/usr/local/spark" >> ~/.bashrc
 RUN echo "export PATH=\$SPARK_HOME/bin:\$PATH" >> ~/.bashrc
