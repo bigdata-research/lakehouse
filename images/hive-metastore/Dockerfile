@@ -7,7 +7,7 @@ RUN apt-get install curl -y
 
 # Instalar Hadoop Common https://archive.apache.org/dist/hadoop/common/
 
-RUN curl https://archive.apache.org/dist/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz \
+RUN curl https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz \
     --output /usr/local/hadoop-3.3.6.tar.gz
 RUN tar xfz /usr/local/hadoop-3.3.6.tar.gz \
     -C /usr/local/
